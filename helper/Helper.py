@@ -1,5 +1,5 @@
 import os
-
+from loguru import logger
 class Helper:
     def get_font_names(self,fonts_folder="./utils/fonts"):
         """
@@ -7,6 +7,7 @@ class Helper:
         :param fonts_folder: Path to the folder containing font files (default: 'fonts').
         :return: List of font names.
         """
+        logger.info("fetching available fonts ")
         font_extensions = ['.ttf', '.otf', '.woff', '.woff2']
         if not os.path.exists(fonts_folder):
             raise FileNotFoundError(f"The folder '{fonts_folder}' does not exist.")

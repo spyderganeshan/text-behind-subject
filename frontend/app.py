@@ -2,6 +2,7 @@ from PIL         import Image
 from loguru      import logger
 import sys
 import os
+from download_button import download_image_button
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from helper.Helper import Helper
@@ -40,7 +41,7 @@ if uploaded_file is not None:
                 files   ={"file": ("image.png", img_bytes, "image/png")},
                 data    ={"model_name": model_selected}
             )
-            logger.info("request sent to %s", API_URL_GENERATE_DEPTH)
+            logger.info(f"request sent to {API_URL_GENERATE_DEPTH} ")
             if response.status_code == 200:
                 st.success("✅  processing completed")
                 st.session_state.process_complete = True
@@ -53,19 +54,25 @@ if st.session_state.process_complete:
     position_x  = st.slider("X position", 0, img_width, img_width // 2)
     position_y  = st.slider("Y position", 0, img_height, img_height // 2)
     text_size   = st.number_input("Font Size:", min_value=10, max_value=1000, value=800, step=10)
-    font_color  = st.color_picker("Font Color:", "#ff0000")
+    col1, col2 = st.columns(2)
+    with col1:
+        text_color  = st.color_picker("Font Color:", "#ff0000")
+    with col2:
+        text_transparency = st.slider("Select Transparency (%)", min_value=0, max_value=100, value=50)
     col1, col2 = st.columns(2)
     with col1:
         font_name = st.selectbox("Font Name:", available_fonts)
 
     if st.button("Generate"):
         with st.spinner("Applying Text Overlay... ⏳"):
-            font_color_rgb = tuple(int(font_color[i:i+2], 16) for i in (1, 3, 5))
+            # Convert transparency from 0-100 range to 0-255 range
+            alpha = int((text_transparency / 100) * 255)
+            text_color_rgba = tuple(int(text_color[i:i+2], 16) for i in (1, 3, 5))+(alpha,)
             data = {
                 "text"          : text,
                 "text_position" : (position_x, position_y),
                 "text_size"     : text_size,
-                "text_color"    : tuple(int(font_color[i:i+2], 16) for i in (1, 3, 5)),
+                "text_color"    : text_color_rgba,
                 "font_name"     : font_name
             }
             response = requests.post(API_URL_APPLY_TEXT,
@@ -74,6 +81,7 @@ if st.session_state.process_complete:
             logger.info("request sent to %s", API_URL_APPLY_TEXT)
             if response.status_code == 200:
                 processed_image     = Image.open("./utils/image/output.png")
-                st.image(processed_image, caption="Processed Image", use_column_width=True)
+                st.image(processed_image, caption="Processed Image", use_container_width=True)
+                download_image_button(processed_image)
             else:
                 st.error("❌ Error updating text!")

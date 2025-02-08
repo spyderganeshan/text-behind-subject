@@ -20,7 +20,7 @@ class ModelProcessor:
         logger.success('Initialized ModelProcessor')
     
     def set_model(self, model_name,image_pil):
-        self.layer_estimator    = LayerEstimator(model_name=self.model_map(model_name))
+        self.layer_estimator    = LayerEstimator(model_name=self.model_map.get(model_name))
         self.image_pil          = image_pil
         logger.info("model set for processing")
         

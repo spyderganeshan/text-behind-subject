@@ -13,7 +13,7 @@ class ApplyTextRequest(BaseModel):                          # Define the request
     text            : str
     text_position   : Tuple[int, int]                       # (x_position, y_position) position of the text
     text_size       : int
-    text_color      : Tuple[int, int, int]                  # (r, g, b) font color
+    text_color      : Tuple[int, int, int,int]                  # (r, g, b, a) font color
     font_name       : str                                   # The font name 
 
 ################################################ generate-depth ########################################################

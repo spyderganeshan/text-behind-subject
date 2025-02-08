@@ -45,7 +45,8 @@ class TextOverlay:
             text_height         = text_size[3] - text_size[1]
             text_x              = self.text_position[0]
             text_y              = self.text_position[1]
-            draw.text((text_x, text_y), self.text, fill=(255, 0, 0, 255), font=self.font)             # Draw text on overlay
+            # fill=(255, 0, 0, 255)
+            draw.text((text_x, text_y), self.text, fill=self.text_color, font=self.font)             # Draw text on overlay
         except Exception as e:
             logger.error(f"Error in apply_text API: {e}")
             return {"error": str(e)}
