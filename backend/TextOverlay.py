@@ -28,6 +28,7 @@ class TextOverlay:
     def apply_text_overlay(self,image_pil,foreground_mask):
         """Apply text behind detected
         objects using depth map."""
+        logger.info(f"applying text overlay...")
         try:
             image           = np.array(image_pil)                                                 # Convert PIL image to NumPy array
             original_h      = image.shape[0]  

@@ -10,8 +10,7 @@ import requests
 
 import io
 import json
-# Get the absolute path of the project's root directory
-API_URL_GENERATE_DEPTH = "http://127.0.0.1:8000/generate-depth/"
+API_URL_GENERATE_DEPTH = "http://127.0.0.1:8000/generate-layer/"
 API_URL_APPLY_TEXT = "http://127.0.0.1:8000/apply-text/"
 my_helper = Helper()
 available_fonts = my_helper.get_font_names()
@@ -21,7 +20,7 @@ st.write("Upload an image, select the model for processing.")
 uploaded_file   = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])       # File uploader
 model_selected  = st.selectbox(                                                             # Model selection
     "Select Depth Estimation Model",
-    ["MiDaS_small", "DPT_Hybrid", "DPT_Large"],
+    ["Small", "Hybrid", "Large"],
     index=0
 )
 if 'process_complete' not in st.session_state:                                              # Initialize session state
@@ -32,7 +31,7 @@ if uploaded_file is not None:
     img_height  = image.size[1]
     st.image(image, caption="Uploaded Image", use_container_width=True)
     if st.button("Process Image"):
-        with st.spinner("Computing Depth... ⏳"):
+        with st.spinner("Computing Layers... ⏳"):
             img_bytes   = io.BytesIO()
             image.save(img_bytes, format="PNG")
             img_bytes   = img_bytes.getvalue()
@@ -41,6 +40,7 @@ if uploaded_file is not None:
                 files   ={"file": ("image.png", img_bytes, "image/png")},
                 data    ={"model_name": model_selected}
             )
+            logger.info("request sent to %s", API_URL_GENERATE_DEPTH)
             if response.status_code == 200:
                 st.success("✅  processing completed")
                 st.session_state.process_complete = True
@@ -71,6 +71,7 @@ if st.session_state.process_complete:
             response = requests.post(API_URL_APPLY_TEXT,
                                      headers={"Content-Type": "application/json"}, 
                                      data   =json.dumps(data))
+            logger.info("request sent to %s", API_URL_APPLY_TEXT)
             if response.status_code == 200:
                 processed_image     = Image.open("./utils/image/output.png")
                 st.image(processed_image, caption="Processed Image", use_column_width=True)
