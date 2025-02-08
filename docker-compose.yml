@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"  # Map FastAPI to localhost:8000
+      - "8501:8501"  # Map Streamlit to localhost:8501
+    restart: always
