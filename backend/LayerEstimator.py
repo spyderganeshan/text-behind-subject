@@ -4,7 +4,7 @@ import torch
 import numpy        as np
 import cv2
 
-class DepthEstimator:
+class LayerEstimator:
     def __init__(self, model_name, device=None):
         """Initialize MiDaS model and transformations."""
         self.device     =   device or torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -15,7 +15,7 @@ class DepthEstimator:
                             transforms.Resize((384, 384)),
                             transforms.ToTensor(),
                             transforms.Normalize(mean=[0.5], std=[0.5])])
-        logger.success(f'Initialized DepthEstimator:DEVICE={self.device}:MODEL={type(self.model)}')
+        logger.success(f'Initialized LayerEstimator:DEVICE={self.device}:MODEL={type(self.model)}')
 
     def estimate_depth(self, image_pil):
         """Predict depth map from an image."""

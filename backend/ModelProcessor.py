@@ -1,4 +1,4 @@
-from backend.DepthEstimator import DepthEstimator
+from backend.LayerEstimator import LayerEstimator
 from backend.TextOverlay    import TextOverlay
 from PIL                    import Image
 from loguru                 import logger
@@ -15,7 +15,7 @@ class ModelProcessor:
         logger.success('Initialized ModelProcessor')
     
     def set_model(self, model_name,image_pil):
-        self.depth_estimator    = DepthEstimator(model_name=model_name)
+        self.depth_estimator    = LayerEstimator(model_name=model_name)
         self.image_pil          = image_pil
         
     def generate_depth_map(self,):
