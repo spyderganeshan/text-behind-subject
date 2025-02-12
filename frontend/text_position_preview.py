@@ -6,7 +6,7 @@ def text_position_preview(image, text, text_color, text_size, font_name, text_tr
     img_width, img_height = image.size
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown("<br><br>", unsafe_allow_html=True)                                 # Adding space above sliders
+        st.write("")  # Adds spacing                                # Adding space above sliders
         x_percent = st.slider("X Position (%)", 0, 100, 50)                             # X and Y position as percentage (0% to 100%)
         y_percent = st.slider("Y Position (%)", 0, 100, 50)
     alpha = int((text_transparency / 100) * 255)                                        # Convert transparency from 0-100 range to 0-255 range
@@ -18,7 +18,8 @@ def text_position_preview(image, text, text_color, text_size, font_name, text_tr
     overlay = Image.new("RGBA", image_with_text.size, (255, 255, 255, 0))               # Transparent layer
     draw = ImageDraw.Draw(overlay)
     try:
-        font = ImageFont.truetype(f"utils/fonts/{font_name}.ttf", text_size)
+        print(f"utils/fonts/{font_name}")
+        font = ImageFont.truetype(f"utils/fonts/{font_name}", text_size)
     except IOError:
         logger.error("could not load font")
         font = ImageFont.load_default()
