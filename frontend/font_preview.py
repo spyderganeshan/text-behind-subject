@@ -38,4 +38,5 @@ def display_font_preview(font_name):
         st.error(error)
     else:
         st.markdown(custom_css, unsafe_allow_html=True)
-        st.markdown('<p class="custom-text">Font Preview: Hello, World!</p>', unsafe_allow_html=True)
+        st.markdown('<p class="custom-text">This is a PREVIEW of the selected font.</p>', unsafe_allow_html=True)
+        

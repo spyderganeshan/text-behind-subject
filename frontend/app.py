@@ -4,16 +4,19 @@ import sys
 import os
 from download_button    import download_image_button
 from font_preview       import get_available_fonts, display_font_preview
+from frontend.text_position_preview import text_position_preview
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import streamlit as st
 import requests
 import io
 import json
+import numpy as np
+
 API_URL_GENERATE_DEPTH  = "http://127.0.0.1:8000/generate-layer/"
 API_URL_APPLY_TEXT      = "http://127.0.0.1:8000/apply-text/"
 available_fonts = get_available_fonts()
-########################################## modela and image selection #################################
-st.title("🔍 Text behind image ")
+########################################## model and image selection #################################
+st.title("🔍 Test Behind Subject ")
 st.write("Upload an image, select the model for processing.")
 uploaded_file   = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])       # File uploader
 model_selected  = st.selectbox(                                                             # Model selection
@@ -23,11 +26,14 @@ model_selected  = st.selectbox(                                                 
 )
 if 'process_complete' not in st.session_state:                                              # Initialize session state
     st.session_state.process_complete = False
+      
 if uploaded_file is not None:
     image       = Image.open(uploaded_file)
     img_width   = image.size[0]  
     img_height  = image.size[1]
-    st.image(image, caption="Uploaded Image", use_container_width=True)
+    col1,col2   = st.columns(2)
+    with col1:
+        st.image(image, caption="Uploaded Image", use_container_width=True)
     if st.button("Process Image"):
         with st.spinner("Computing Layers... ⏳"):
             img_bytes   = io.BytesIO()
@@ -51,25 +57,24 @@ if st.session_state.process_complete:
     with col1:
         text        = st.text_input("Enter Text:")
     with col2:
-        text_size   = st.number_input("Font Size:", min_value=10, max_value=2000, value=800, step=10)
-    
-    col1, col2 = st.columns(2)
+        text_size   = st.number_input("Text Size:", min_value=10, max_value=2000, value=800, step=10)
+    col1, col2      = st.columns(2)
     with col1:
-        font_name = st.selectbox("Font Name:", available_fonts)
+        font_name   = st.selectbox("Select Font:", available_fonts)
     with col2:
+        st.write("")
         if font_name:
             display_font_preview(font_name)
     col1, col2  = st.columns(2)
     with col1:
         text_transparency = st.slider("Select Transparency (%)", min_value=0, max_value=100, value=50)
+        alpha = int((text_transparency / 100) * 255)
     with col2:
-        text_color  = st.color_picker("Font Color:", "#ff0000")
-    position_x  = st.slider("X position", 0, img_width, img_width // 2)
-    position_y  = st.slider("Y position", 0, img_height, img_height // 2)
+        text_color  = st.color_picker("Text Color:", "#ff0000")
+        text_color_rgba = tuple(int(text_color[i:i+2], 16) for i in (1, 3, 5))+(alpha,)                     # Convert transparency from 0-100 range to 0-255 range
+    position_x, position_y=text_position_preview(image, text, text_color, text_size,font_name,text_transparency)
     if st.button("Generate"):
         with st.spinner("Applying Text Overlay... ⏳"):
-            alpha = int((text_transparency / 100) * 255)                                        # Convert transparency from 0-100 range to 0-255 range
-            text_color_rgba = tuple(int(text_color[i:i+2], 16) for i in (1, 3, 5))+(alpha,)
             data = {
                 "text"          : text,
                 "text_position" : (position_x, position_y),

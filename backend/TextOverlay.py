@@ -35,14 +35,14 @@ class TextOverlay:
             original_w      = image.shape[1]
             text_overlay    = Image.new("RGBA", (original_w, original_h), (0, 0, 0, 0))           # Create text overlay using PIL
             draw            = ImageDraw.Draw(text_overlay)
-            text_size       = draw.textbbox((0, 0), self.text, font=self.font)                    # Get text width/height
+            # text_size       = draw.textbbox((0, 0), self.text, font=self.font)                    # Get text width/height
         except Exception as e:
             logger.error(f"Error in apply_text API: {e}")
             return {"error": str(e)}
         
         try:
-            text_width          = text_size[2] - text_size[0]
-            text_height         = text_size[3] - text_size[1]
+            # text_width          = text_size[2] - text_size[0]
+            # text_height         = text_size[3] - text_size[1]
             text_x              = self.text_position[0]
             text_y              = self.text_position[1]
             # fill=(255, 0, 0, 255)
