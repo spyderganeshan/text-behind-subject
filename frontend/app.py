@@ -1,20 +1,19 @@
-from PIL         import Image
-from loguru      import logger
+from PIL                    import Image
+from loguru                 import logger
+from download_button        import download_image_button
+from font_preview          import get_available_fonts, display_font_preview
+from text_position_preview  import text_position_preview
 import sys
 import os
-from download_button    import download_image_button
-from font_preview2       import get_available_fonts, display_font_preview
-from text_position_preview import text_position_preview
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import streamlit as st
 import requests
 import io
 import json
-import numpy as np
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 API_URL_GENERATE_DEPTH  = "http://127.0.0.1:8000/generate-layer/"
 API_URL_APPLY_TEXT      = "http://127.0.0.1:8000/apply-text/"
-available_fonts = get_available_fonts()
+available_fonts         = get_available_fonts()
 ########################################## model and image selection #################################
 st.title("🔍 Test Behind Subject ")
 st.write("Upload an image, select the model for processing.")
@@ -50,10 +49,9 @@ if uploaded_file is not None:
                 st.session_state.process_complete = True
             else:
                 st.error("❌ processing failed")
-
 ######################################### Text customization ##########################################
 if st.session_state.process_complete:
-    col1, col2 = st.columns(2)
+    col1, col2      = st.columns(2)
     with col1:
         text        = st.text_input("Enter Text:")
     with col2:
@@ -69,9 +67,9 @@ if st.session_state.process_complete:
     col1, col2  = st.columns(2)
     with col1:
         text_transparency = st.slider("Select Transparency (%)", min_value=0, max_value=100, value=50)
-        alpha = int((text_transparency / 100) * 255)
+        alpha   = int((text_transparency / 100) * 255)
     with col2:
-        text_color  = st.color_picker("Text Color:", "#ff0000")
+        text_color      = st.color_picker("Text Color:", "#ff0000")
         text_color_rgba = tuple(int(text_color[i:i+2], 16) for i in (1, 3, 5))+(alpha,)                     # Convert transparency from 0-100 range to 0-255 range
     # print(font_name+available_fonts[font_name])
     position_x, position_y=text_position_preview(image, text, text_color, text_size,font_name+available_fonts[font_name],text_transparency)
