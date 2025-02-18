@@ -26,9 +26,8 @@ pip install timm
 uvicorn backend.main:app --reload
 ```
 **To run the streamlit**
-navigate to the `app.py` directory
 ```
-streamlit run app.py
+streamlit run frontend/app.py
 ```
 
 

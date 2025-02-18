@@ -13,11 +13,11 @@ class ApplyTextRequest(BaseModel):                          # Define the request
     text            : str
     text_position   : Tuple[int, int]                       # (x_position, y_position) position of the text
     text_size       : int
-    text_color      : Tuple[int, int, int]                  # (r, g, b) font color
+    text_color      : Tuple[int, int, int,int]                  # (r, g, b, a) font color
     font_name       : str                                   # The font name 
 
 ################################################ generate-depth ########################################################
-@app.post("/generate-depth/")
+@app.post("/generate-layer/")
 async def generate_depth(file : UploadFile = File(...), model_name : str = Form(...)):
     
     """API endpoint to set the model and generate depth for a new image."""
@@ -26,8 +26,9 @@ async def generate_depth(file : UploadFile = File(...), model_name : str = Form(
         model_processor.set_model(model_name,image_pil)     # Set the model
         model_processor.generate_depth_map()
         model_processor.process_foreground()
-        return {"message": f"Model {model_name} set and image processing successfully!"}
+        return {"message": f"Image processing successfully!"}
     except Exception as e:
+        logger.error(f"Error in layer API: {e}")
         return {"error": str(e)}
 
 ################################################# apply-text #########################################################

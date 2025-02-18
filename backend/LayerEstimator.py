@@ -15,21 +15,22 @@ class LayerEstimator:
                             transforms.Resize((384, 384)),
                             transforms.ToTensor(),
                             transforms.Normalize(mean=[0.5], std=[0.5])])
-        logger.success(f'Initialized LayerEstimator:DEVICE={self.device}:MODEL={type(self.model)}')
+        logger.success(f'Initialized LayerEstimator:DEVICE={self.device}:MODEL=***')
 
     def estimate_depth(self, image_pil):
         """Predict depth map from an image."""
+        logger.info('Estimating layermap...')
         input_tensor    =   self.transform(image_pil).unsqueeze(0).to(self.device)
         with torch.no_grad():                                                                       # Predict depth
             depth_map   =   self.model(input_tensor).squeeze().cpu().numpy()            
         original_w, original_h  = image_pil.size                                                    # Resize depth map to original size
         depth_map  = cv2.resize(depth_map, (original_w, original_h))
         depth_normalized  = cv2.normalize(depth_map, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8) # Normalize depth map
-        
         return depth_normalized
     
     def extract_foreground(self,depth_normalized,image):
         """Process foreground image."""
+        logger.info('extracting foreground...')
         _, foreground_mask  = cv2.threshold(depth_normalized, 128, 255, cv2.THRESH_BINARY)           # Threshold depth to create a foreground mask
         foreground_mask     = cv2.GaussianBlur(foreground_mask, (5, 5), 0)                           # Smooth edges
         foreground          = cv2.bitwise_and(image, image, mask=foreground_mask)                    # Create foreground-only image (Apply mask to original image)
